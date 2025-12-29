@@ -1,0 +1,127 @@
+.custom-svg{
+    height: 10px;
+    margin: 6px 6px;
+}
+.user-profile-box{
+    height: 342px;
+}
+
+.invalid-txt {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #E11D48;
+}
+
+.fa-solid.fa-eye-slash, .fa-solid.fa-eye{
+    cursor: pointer;
+}
+
+span.nav-active{
+    color: #fb503b;
+}
+
+
+/* Sidebar in its default expanded state */
+#sidebarMenu {
+    width: 260px; /* Adjust as needed */
+    transition: width 0.3s ease-in-out;
+    overflow-x: hidden;
+}
+
+/* Collapsed sidebar state */
+#sidebarMenu.collapsed {
+    width: 65px; /* Adjust as needed, should be enough for icons */
+}
+
+#sidebarMenu.collapsed .nav-link span.sidebar-text {
+    display: none;
+}
+
+/* Adjust the main content to move when the sidebar collapses */
+.content {
+    margin-left: 260px; /* Match the default sidebar width */
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.content.collapsed {
+    margin-left: 65px; /* Match the collapsed sidebar width */
+}
+
+.notyf__message {
+    white-space: nowrap !important; 
+    overflow: hidden !important;      
+    text-overflow: ellipsis !important; 
+}
+
+.notyf__toast {
+    max-width: 600px !important; 
+}
+
+.notyf__ripple {
+    width: 700px !important;
+}
+
+/* .form-control.is-invalid, .was-validated .form-control:invalid, .form-check-input.is-invalid, .form-select.is-invalid, .was-validated .form-select:invalid{
+    background-image: none !important;
+    border-color: #ced4da !important;
+    box-shadow: none !important;
+} */
+
+.form-check-input.is-invalid~.form-check-label{
+    color: #374151 !important;
+}
+
+.form-control.is-invalid,
+.was-validated .form-control:invalid,
+.form-check-input.is-invalid {
+  background-image: none !important;
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
+
+.form-select.is-invalid,
+.was-validated .form-select:invalid {
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
+
+.cursor-pointer:hover {
+    cursor: pointer;
+}
+
+
+.thumbnails-preview {
+    padding: 15px;
+    margin-top: 20px; 
+}
+
+.thumbnail-item {
+    max-width: 150px; 
+    height: auto;    
+    object-fit: cover; 
+    border: 1px solid #ddd;
+    border-radius: 5px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out; 
+}
+
+.thumbnail-item:hover {
+    transform: scale(1.05); 
+}
+
+
+@media (max-width: 576px) {
+    .thumbnail-item {
+        max-width: 100px; 
+    }
+}
+
+.swal2-styled.swal2-confirm {
+    background-color: #1F2937 !important;
+}
+
+.swal2-styled.swal2-cancel {
+    background-color: #fb503b !important;
+}
