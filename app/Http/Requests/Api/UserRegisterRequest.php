@@ -3,10 +3,23 @@
 namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
 class UserRegisterRequest extends BaseRequest
 {
+    /***
+     * set phone_code and number into a single field
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'phone_e164' => $this->phone_country_code . $this->phone_number,
+        ]);
+    }
+
+
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -57,6 +70,11 @@ class UserRegisterRequest extends BaseRequest
                 // 'required_without:email',
             ],
 
+            'phone_e164'  => [
+                'required',
+                Rule::unique('user_details', 'phone_e164'),
+            ],
+
             'password' => [
                 'required',
                 'confirmed',
@@ -67,6 +85,18 @@ class UserRegisterRequest extends BaseRequest
                 'required_with:password',
                 'string',
             ],
+        ];
+    }
+
+
+
+    /***
+     * Validation messages
+     */
+    public function messages(): array
+    {
+        return [
+            'phone_e164.unique' => 'Phone number is already registered.',
         ];
     }
 }

@@ -19,6 +19,18 @@ class UserDetail extends Model
         'city_name',
     ];
 
+
+    /**
+     * Inserting combined phone_code and 
+     */
+    protected static function booted()
+    {
+        static::saving(function ($model) {
+            $model->phone_e164 =
+                $model->phone_country_code . $model->phone_number;
+        });
+    }
+
     public function user(){
         return $this->belongsTo(User::class);
     }

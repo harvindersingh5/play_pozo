@@ -1,10 +1,13 @@
 <x-auth-layout>
+     <!-- Session Status -->
+    {{-- <x-auth-session-status class="mb-4" :status="session('status')" /> --}}
+
     @section('title', 'Reset Password')
     @include('admin.common.notification')
     <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
         <div class="container">
             <div class="row justify-content-center form-bg-image">
-                <p class="text-center"><a href="{{ route('login') }}"
+                {{-- <p class="text-center"><a href="{{ route('login') }}"
                         class="d-flex align-items-center justify-content-center">
                         <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg">
@@ -14,14 +17,15 @@
                         </svg>
                         Back to log in
                     </a>
-                </p>
+                </p> --}}
                 <div class="col-12 d-flex align-items-center justify-content-center">
                     <div class="bg-white shadow border-0 rounded p-4 p-lg-5 w-100 fmxw-500">
                         <h1 class="h3 mb-4">Reset password</h1>
                         <form action="{{ route('password.store') }}" method="POST" id="reset-password-form">
                             @csrf
                             <input type="hidden" name="token" value="{{ $request->route('token') }}">
-                            <div class="mb-4">
+                            <input type="hidden" name='email' value="{{ $request->email }}">
+                            {{-- <div class="mb-4">
                                 <label for="email">Your Email</label>
                                 <div class="input-group">
                                      <span class="input-group-text" id="basic-addon2">
@@ -42,7 +46,7 @@
                                         </span>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
                             <!-- End of Form -->
                             <!-- Form -->
                             <div class="form-group mb-4">

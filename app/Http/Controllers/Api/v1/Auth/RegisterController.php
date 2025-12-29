@@ -130,10 +130,14 @@ class RegisterController extends Controller
             ]);
             DB::commit();
 
-            $user = User::select('id', 'email')->find($user->id)->append('full_name');;
+            // $user = User::select('id', 'email')->find($user->id)->append('full_name');;
 
             $data = [
-                'user' => $user,
+                'user' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'full_name' => $user->full_name
+                ],
                 'token' => $user->createToken(config('constant.sanctum.token_name'))->plainTextToken
             ];
 

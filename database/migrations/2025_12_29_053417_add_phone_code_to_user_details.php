@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_details', function (Blueprint $table) {
-            $table->string('phone_country_code')->before('phone_number')->nullable();
-            $table->string('phone_e164')->unique()->after('phone_number')->nullable();
+            $table->string('phone_country_code')->after('city')->nullable();
+            $table->string('phone_e164')->after('phone_number')->unique()->nullable();
         });
     }
 

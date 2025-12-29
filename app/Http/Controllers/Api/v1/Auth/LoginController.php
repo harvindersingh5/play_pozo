@@ -117,6 +117,7 @@ class LoginController extends Controller
             // Determine login field: email or phone
             $user = $this->getUserByEmailOrPhone(phone_email: $data['phone_email'], phone_country_code: $data['phone_country_code'] ?? null);
 
+            
             // Validate credentials
             if (!$user || !Hash::check($data['password'], $user->password)) {
                 return $this->errorResponse(message: __('auth.failed'), code: 401);
