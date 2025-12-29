@@ -73,6 +73,7 @@
     <div class="card card-body shadow border-0 table-wrapper table-responsive">
         <div class="card-body">
             <div id="userList">
+                <h5>Stripe Details</h5>
                 <x-payment-settings-list :settings="$settings" />
             </div>
         </div>

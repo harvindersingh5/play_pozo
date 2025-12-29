@@ -159,6 +159,7 @@ if (!function_exists('isSubadmin2FAEnabled')) {
 if (!function_exists('apiError')) {
     function apiError($message, $error, $status = 500, array $extra = [])
     {
+        $status = is_int($status) ? $status : 500; 
         return response()->json(array_merge([
             'status'  => false,
             'message' => $message,
@@ -166,6 +167,7 @@ if (!function_exists('apiError')) {
         ], $extra), $status);
     }
 }
+
 if (!function_exists('sanctumErrorMessage')) {
     function sanctumErrorMessage($e)
     {

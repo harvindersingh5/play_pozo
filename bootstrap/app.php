@@ -32,26 +32,29 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // $middleware->api(prepend: [
-        //     EnsureFrontendRequestsAreStateful::class,
-        // ]);
-
+        $middleware->api(
+            prepend: [
+                // EnsureFrontendRequestsAreStateful::class,
+                \Illuminate\Http\Middleware\HandleCors::class,
+                'throttle:api',
+                \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            ],
+        );
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
-
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, HttpRequest $request) {
             // // Only handle API requests
-            // if (!$request->is('api/*') && !$request->expectsJson()) {
-            //     return null; // Let default handler take over for web routes
-            // }
+            if (!$request->is('api/*') && !$request->expectsJson()) {
+                return null; // Let default handler take over for web routes
+            }
             // Map exceptions to responses
 
-            return match ($request->is('api/*') || $request->expectsJson()) {
+            return match ($request->is('api/*')) {
                 // 401 - Unauthenticated
                 $e instanceof AuthenticationException =>
                 apiError(__('message.exception.authentication.message'), __('message.exception.authentication.error'), __('message.exception.authentication.code')),
@@ -64,19 +67,19 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 // 403 - Forbidden
                 $e instanceof AuthorizationException =>
-                apiError(__('message.exception.authorization.message'), __('message.exception.authorization.message'), __('message.exception.authorization.message')),
+                apiError(__('message.exception.authorization.message'), __('message.exception.authorization.message'), __('message.exception.authorization.code')),
 
                 // 404 - Model Not Found
                 $e instanceof ModelNotFoundException =>
-                apiError(__('message.exception.model_not_found.message'), __('message.exception.model_not_found.message'), __('message.exception.model_not_found.message')),
+                apiError(__('message.exception.model_not_found.message'), __('message.exception.model_not_found.message'), __('message.exception.model_not_found.code')),
 
                 // 404 - Route Not Found
                 $e instanceof NotFoundHttpException =>
-                apiError(__('message.exception.route_not_found.message'), __('message.exception.route_not_found.message'), __('message.exception.route_not_found.message')),
+                apiError(__('message.exception.route_not_found.message'), __('message.exception.route_not_found.message'), __('message.exception.route_not_found.code')),
 
                 // 405 - Wrong HTTP Method
                 $e instanceof MethodNotAllowedHttpException =>
-                apiError(__('message.exception.method_not_allowed.message'), __('message.exception.method_not_allowed.message'), __('message.exception.method_not_allowed.message'), [
+                apiError(__('message.exception.method_not_allowed.message'), __('message.exception.method_not_allowed.message'), __('message.exception.method_not_allowed.code'), [
                     'allowed_methods' => $e->getHeaders()['Allow'] ?? null,
                 ]),
 

@@ -111,7 +111,7 @@
                     </a>
                 </li>
             @endcan
-            @can('category-view')
+            {{-- @can('category-view')
                 <li class="nav-item">
                     <span class="nav-link collapsed d-flex justify-content-between align-items-center"
                         data-bs-toggle="collapse" data-bs-target="#submenu-category"
@@ -146,15 +146,15 @@
                                     </a>
                                 </li>
                             @endcan
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                             <a href="/users" class="nav-link">
                                 <span class="sidebar-text">SubCategory</span>
                             </a>
-                        </li> --}}
+                        </li>
                         </ul>
                     </div>
                 </li>
-            @endcan
+            @endcan --}}
             @can('commission-view')
                 <li class="nav-item {{ $segment2 == 'commissions' ? 'active' : '' }}">
                     <a href="{{ route('admin.commission.index') }}" class="nav-link d-flex justify-content-between">
@@ -252,12 +252,12 @@
                 <div class="multi-level collapse {{ $segment2 == 'settings' && ($segment3 === 'website' || $segment3 === 'favicon' || $segment3 === 'website-name' || $segment3 === 'smtp-details' || $segment3 === 'thumbnail-size' || $segment3 == 'two-factor-create') ? 'show' : '' }}"
                     role="list" id="submenu-settings" aria-expanded="false">
                     <ul class="flex-column nav">
-                        <li
+                        {{-- <li
                             class="nav-item {{ $segment2 === 'settings' && $segment3 === 'website' ? 'active' : '' }}">
                             <a href="{{ route('admin.settings.website.index') }}" class="nav-link">
                                 <span class="sidebar-text">Website Settings</span>
                             </a>
-                        </li>
+                        </li> --}}
                         {{-- <li class="nav-item {{ $segment2 === 'settings' && $segment3 === 'favicon' ? 'active' : '' }}">
                             <a href="{{ route('admin.settings.favicon.index') }}" class="nav-link">
                                 <span class="sidebar-text">Favicon</span>
@@ -274,20 +274,20 @@
                                 <span class="sidebar-text">SMTP Details</span>
                             </a>
                         </li>
-                        <li
+                        {{-- <li
                             class="nav-item {{ $segment2 === 'settings' && $segment3 === 'thumbnail-size' ? 'active' : '' }}">
                             <a href="{{ route('admin.settings.thumbnail.index') }}" class="nav-link">
                                 <span class="sidebar-text">Image Thumbnails</span>
                             </a>
-                        </li>
-                        @if(auth()->user()->id == '1')
+                        </li> --}}
+                        {{-- @if(auth()->user()->id == '1')
                             <li
                                 class="nav-item {{ $segment2 === 'settings' && $segment3 === 'two-factor-create' ? 'active' : '' }}">
                                 <a href="{{ route('admin.settings.two-factor-create') }}" class="nav-link">
                                     <span class="sidebar-text">Two Factor Enabled</span>
                                 </a>
                             </li>
-                        @endif
+                        @endif --}}
                     </ul>
                 </div>
             </li>
@@ -395,7 +395,7 @@
                 </li>
             @endcan
 
-            @can('store-view')
+            {{-- @can('store-view')
                 <li class="nav-item">
                     <span class="nav-link collapsed d-flex justify-content-between align-items-center"
                         data-bs-toggle="collapse" data-bs-target="#submenu-store"
@@ -430,15 +430,15 @@
                                     </a>
                                 </li>
                             @endcan
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                             <a href="/users" class="nav-link">
                                 <span class="sidebar-text">SubCategory</span>
                             </a>
-                        </li> --}}
+                        </li>
                         </ul>
                     </div>
                 </li>
-            @endcan
+            @endcan --}}
             
         </ul>
     </div>

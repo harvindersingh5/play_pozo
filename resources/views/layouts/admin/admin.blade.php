@@ -85,7 +85,7 @@
         @include('layouts.admin.topbar')
         {{ $slot }}
         {{-- Footer --}}
-        @include('layouts.admin.footer')
+        {{-- @include('layouts.admin.footer') --}}
     </main>
 
     <script src="{{asset('assets/admin/js/jquery-3.6.0.min.js')}}"></script>

@@ -28,7 +28,7 @@ class PlanController extends Controller
      */
     public function listPlans(Request $request)
     {
-        if (is_null(env('STRIPE_SECRET'))) {
+        if (!is_null(config('services.pk_key'))) {
             // notify()->success('Please add the stripe details', 'Success');
             return redirect()->route('admin.dashboard')->with('error', 'Please add the stripe details');
         }

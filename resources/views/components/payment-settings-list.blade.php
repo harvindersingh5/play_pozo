@@ -10,11 +10,7 @@
     <tbody>
         @if ($settings)
             @if ($settings->secret_key && $settings->public_key)
-                <tr>
-                    <td colspan="1">
-                        <i>Stripe Details</i>
-                    </td>
-                </tr>
+          
                 <tr>
                     <td>
                         <span class="fw-normal">{{ $settings->secret_key['hidden'] ?? 'N/A' }}</span>
@@ -65,7 +61,7 @@
                     </td>
                 </tr>
             @endif
-            @if ($settings->paypal_client_id && $settings->paypal_client_secret)
+            {{-- @if ($settings->paypal_client_id && $settings->paypal_client_secret)
                 <tr>
                     <td colspan="1">
                         <i>Paypal Details</i>
@@ -120,7 +116,7 @@
                         </div>
                     </td>
                 </tr>
-            @endif
+            @endif --}}
         @else
             <tr>
                 <td colspan="7" class="text-center">

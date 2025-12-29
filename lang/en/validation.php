@@ -193,4 +193,51 @@ return [
 
     'attributes' => [],
 
+    'custom' => [
+        'full_name' => [
+            'required' => 'Full name is required.',
+            'string'   => 'Full name must be a valid string.',
+            'min'      => 'Full name must be at least :min characters.',
+            'max'      => 'Full name must not exceed :max characters.',
+        ],
+
+        'email' => [
+            'required' => 'Email is required.',
+            'string'   => 'Email must be a valid string.',
+            'email'    => 'Email must be a valid email address.',
+            'max'      => 'Email must not exceed :max characters.',
+            'unique'   => 'This email is already registered.',
+            'regex'    => 'Email is invalid.',
+        ],
+
+        'phone_country_code' => [
+            'required' => 'Phone code is required.',
+            'string'   => 'Phone code must be a string.',
+            'regex'    => 'Phone code is invalid.',
+        ],
+
+        'phone_number' => [
+            'required' => 'Phone number is required.',
+            'string'   => 'Phone number must be a string.',
+            'regex'    => 'Phone number format is invalid.',
+        ],
+
+        'phone_e164' => [
+            'required' => 'Phone number is required.',
+            'unique'   => 'Phone number is already registered.',
+        ],
+
+        'password' => [
+            'required'  => 'Password is required.',
+            'confirmed' => 'Password confirmation does not match.',
+            'string'    => 'Password must be a valid string.',
+            'regex'     => 'Password is invalid.',
+        ],
+
+        'password_confirmation' => [
+            'required_with' => 'Password confirmation is required when password is present.',
+            'string'        => 'Password confirmation must be a string.',
+        ],
+    ],
+
 ];

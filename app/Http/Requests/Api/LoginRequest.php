@@ -35,23 +35,36 @@ class LoginRequest extends BaseRequest
                 'nullable',
                 'string',
                 'regex:' . config('validation.phone_number_country_code.regex'),
-                // 'required_with:phone_number',
-                // 'required_without:email',
             ],
-
-            // 'phone_number' => [
-            //     'nullable',
-            //     'string',
-            //     'digits_between:6,15',
-            //     'required_with:phone_country_code',
-            //     'required_without:email',
-            // ],
 
             'password' => [
                 'required',
                 'string',
                 Rules\Password::defaults(),
             ],
+        ];
+    }
+
+
+    /***
+     * Validation messages
+     */
+    public function messages(): array
+    {
+        return [
+            // phone_email
+            'phone_email.required' => __('validation.custom.phone_email.required'),
+            'phone_email.string'   => __('validation.custom.phone_email.string'),
+            'phone_email.phone_or_email' => __('validation.custom.phone_email.phone_or_email'), // for custom rule message
+
+            // phone_country_code
+            'phone_country_code.string' => __('validation.custom.phone_country_code.string'),
+            'phone_country_code.regex'  => __('validation.custom.phone_country_code.regex'),
+
+            // password
+            'password.required' => __('validation.custom.password.required'),
+            'password.string'   => __('validation.custom.password.string'),
+            'password.regex'    => __('validation.custom.password.regex'),
         ];
     }
 }

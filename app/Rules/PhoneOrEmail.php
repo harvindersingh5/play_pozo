@@ -18,7 +18,7 @@ class PhoneOrEmail implements ValidationRule
         if (request()->filled('phone_country_code')) {
 
             if (! preg_match(config('validation.phone_number.regex'), $value)) {
-                $fail('Phone number is invalid');
+                $fail(__('validation.custom.phone_number.regex'));
             }
 
             return;
@@ -26,17 +26,12 @@ class PhoneOrEmail implements ValidationRule
 
         // EMAIL validation when country code does NOT exist
         if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $fail('Email is invalid');
-            return;
-        }
-
-        if (strlen($value) > config('validation.email.max')) {
-            $fail(__('Max 255 characters'));
+            $fail(__('validation.custom.email.regex'));
             return;
         }
 
         if (! preg_match(config('validation.email.regex'), $value)) {
-            $fail(__('Email is invalid'));
+            $fail(__('validation.custom.email.regex'));
         }
     }
 }
