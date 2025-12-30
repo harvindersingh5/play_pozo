@@ -93,8 +93,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 // DEFAULT: Catch-All Handler
                 default => apiError(
-                    config('app.debug') ? $e->getMessage() : 'Internal server error',
-                    config('app.debug') ? get_class($e) : 'Unexpected error',
+                    config('app.debug') ? $e->getMessage() : __('message.exception.default.message'),
+                    config('app.debug') ? get_class($e) : __('message.exception.default.error'),
                     guessStatus($e),
                     config('app.debug') ? [
                         'trace' => $e->getTraceAsString(),

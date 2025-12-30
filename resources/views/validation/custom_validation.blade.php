@@ -62,4 +62,9 @@
     const planNameMinLength = {{ config('validation.plan_name_minlength') }};
     const planNameMaxLength = {{ config('validation.plan_name_maxlength') }};
 
+    //Date format for js
+    const DATE_FORMAT = "{{ config('constant.date_format.js') }}";
+
+    const PHONE_COUNTRY_CODE_REGEX = {{ config('validation.phone_number_country_code.regex') }};
+    const PHONE_COUNTRY_REGEX = {{ config('validation.phone_number.regex') }};
 </script>

@@ -106,23 +106,23 @@
         });
     @endif
 
-    @if ($errors->any())
-        const notyfErrorBag = new Notyf(<?php echo json_encode($notyfConfig); ?>);
-        notyfErrorBag.options.types.push({
-            type: 'error',
-            background: '#dc3545', // Standard error background
-            icon: {
-                className: 'fas fa-times-circle',
-                tagName: 'span',
-                color: '#fff'
-            },
-            dismissible: true
-        });
-        @foreach ($errors->all() as $error)
-            notyfErrorBag.open({
-                type: 'error',
-                message: '{{ $error }}'
-            });
-        @endforeach
-    @endif
+    // @if ($errors->any())
+    //     const notyfErrorBag = new Notyf(<?php echo json_encode($notyfConfig); ?>);
+    //     notyfErrorBag.options.types.push({
+    //         type: 'error',
+    //         background: '#dc3545', // Standard error background
+    //         icon: {
+    //             className: 'fas fa-times-circle',
+    //             tagName: 'span',
+    //             color: '#fff'
+    //         },
+    //         dismissible: true
+    //     });
+    //     @foreach ($errors->all() as $error)
+    //         notyfErrorBag.open({
+    //             type: 'error',
+    //             message: '{{ $error }}'
+    //         });
+    //     @endforeach
+    // @endif
 </script>

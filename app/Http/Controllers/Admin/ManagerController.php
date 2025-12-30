@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
-use App\Models\User;
-use App\Models\UserActivity;
-use App\Models\UserDetail;
+use App\Models\{User, UserActivity, UserDetail};
+use App\Traits\AdminTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{DB, Hash, Log, Mail, Storage};
 use Illuminate\Support\Facades\Response;
 use Spatie\Permission\Models\{Permission, Role};
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-
-class UserController extends Controller
+class ManagerController extends Controller
 {
+    use AdminTrait;
+
     /**
      * Display a listing of users.
      *
@@ -23,30 +23,19 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $role = config('constant.role.manager.name');
-            $query = User::excludeAdmins()->role($role);
-            if ($request->has('search') && !empty($request->search)) {
-                $query->search($request->search);
-            }
+            $roleName = config('constant.role.manager.name');
+            $users = $this->getUsers($request, $roleName);
 
-            if ($request->has('status')) {
-                $query->status($request->status);
-            }
-
-            $paginationNumber = $request->input('paginationNumber', config('constant.pagination_number'));
-            $users = $query->orderBy('id', 'DESC')->paginate($paginationNumber);
-        
             // $users = $query->orderBy('id', 'DESC')->get();
             if ($request->ajax()) {
                 return response()->json([
-                    'html' => view('components.user-list', ['users' => $users, 'role' => 'managers'])->render(),
+                    'html' => view('components.user-list', compact('users'))->render(),
                 ]);
             }
 
             // Return view for non-AJAX requests
-            return view('admin.users.index', compact('users'));
+            return view('admin.managers.index', compact('users'));
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -60,7 +49,7 @@ class UserController extends Controller
     {
         try {
             $roles = Role::whereNot('name', 'Administrator')->get();
-            return view('admin.users.create', compact('roles'));
+            return view('admin.managers.create', compact('roles'));
         } catch (\Exception $e) {
             \Log::info("User Form creation error");
             return redirect()->back();
@@ -109,13 +98,14 @@ class UserController extends Controller
                 'pincode' => $request->postal_code,
                 'profile_path' => $profilePicPath['url'] ?? null,
                 'back_profile_path' => $backPicPath['url'] ?? null
+
             ];
 
             UserDetail::create($userDetailsData);
 
             DB::commit();
 
-            return redirect()->route('admin.users.index')->with('success', 'User created successfully');
+            return redirect()->route('admin.managers.index')->with('success', 'User created successfully');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('error', 'User creation failed: ' . $e->getMessage());
@@ -132,7 +122,7 @@ class UserController extends Controller
             $userId = jsdecode_userdata($id);
             $user = User::findOrFail($userId);
             $roles = Role::get();
-            return view('admin.users.edit', compact('user', 'roles'));
+            return view('admin.managers.edit', compact('user', 'roles'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -213,7 +203,7 @@ class UserController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.users.index')->with('success', 'User updated successfully');
+            return redirect()->route('admin.managers.index')->with('success', 'User updated successfully');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('error', 'User update failed: ' . $e->getMessage());
@@ -236,7 +226,7 @@ class UserController extends Controller
                 Storage::disk('public')->delete($user->user_detail->back_profile_path);
             }
             $user->delete();
-            return redirect()->route('admin.users.index')->with('success', 'User deleted successfully');
+            return redirect()->route('admin.managers.index')->with('success', 'User deleted successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -252,7 +242,7 @@ class UserController extends Controller
             $user = User::findOrFail($userId);
             $roles = Role::get();
 
-            return view('admin.users.show', compact('user', 'roles'));
+            return view('admin.managers.show', compact('user', 'roles'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -271,7 +261,7 @@ class UserController extends Controller
             $user->update([
                 'status' => 'Suspended',
             ]);
-            return redirect()->route('admin.users.index')->with('success', 'User suspended successfully');
+            return redirect()->route('admin.managers.index')->with('success', 'User suspended successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -382,7 +372,6 @@ class UserController extends Controller
             };
 
             return new StreamedResponse($callback, 200, $headers);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -423,7 +412,7 @@ class UserController extends Controller
     }
 
 
-     /**
+    /**
      * Display a listing of sub-admin users.
      *
      * @return \Illuminate\View\View
@@ -460,20 +449,21 @@ class UserController extends Controller
         }
     }
 
-    public function userActivity(Request $request){
-         try {
+    public function userActivity(Request $request)
+    {
+        try {
             $query = UserActivity::with('user')->where(function ($q) {
                 $q->whereNull('user_id')
-                ->orWhere('user_id', '!=', 1);
+                    ->orWhere('user_id', '!=', 1);
             });
 
             if ($request->has('search') && !empty($request->search)) {
                 $query->search($request->search);
             }
-            
+
             if ($request->filled('status') && $request->status !== 'all') {
-                    $query->where('status', $request->status);
-                }
+                $query->where('status', $request->status);
+            }
             $paginationNumber = $request->input('paginationNumber', config('constant.pagination_number'));
             $logs = $query->orderBy('id', 'DESC')->paginate($paginationNumber);
             if ($request->ajax()) {

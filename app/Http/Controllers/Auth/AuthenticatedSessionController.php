@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             event(new Failed('web', $user, ['email' => $request->email]));
-            return back()->withErrors(['email' => 'The provided credentials do not match our records.']);
+            return back()->withErrors(['email' => __('auth.failed')]);
         }
         // ✅ If 2FA is enabled and user is subadmin, start OTP flow
         if ($user->hasRole('Subadmin') && isSubadmin2FAEnabled()) {
@@ -63,7 +63,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('otp.form');
         }
         // ✅ Regular login
-        Auth::login($user, $request->boolean('remember'));
+        Auth::login($user, true);
+        
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));

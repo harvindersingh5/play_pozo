@@ -72,7 +72,7 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                             </span>
-                            <span class="sidebar-text {{ $segment2 == 'users' ? 'nav-active' : '' }}">Users</span>
+                            <span class="sidebar-text {{ $segment2 == 'users' ? 'nav-active' : '' }}">User Management</span>
                         </span>
                     </a>
                 </li>
@@ -111,11 +111,9 @@
                     </a>
                 </li>
             @endcan
-            {{-- @can('category-view')
-                <li class="nav-item">
-                    <span class="nav-link collapsed d-flex justify-content-between align-items-center"
-                        data-bs-toggle="collapse" data-bs-target="#submenu-category"
-                        aria-expanded="{{ $segment2 === 'category' ? 'true' : 'false' }}">
+            @can('category-view')
+                <li class="nav-item {{ $segment2 == 'category' ? 'active' : '' }}">
+                    <a href="{{ route('admin.category.index') }}" class="nav-link">
                         <span>
                             <span class="sidebar-icon">
                                 <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
@@ -128,33 +126,9 @@
                             <span class="sidebar-text {{ $segment2 == 'category' ? 'nav-active' : '' }}">Manage
                                 Category</span>
                         </span>
-                        <span class="link-arrow"><svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                    clip-rule="evenodd"></path>
-                            </svg></span>
-                    </span>
-                    <div class="multi-level collapse {{ $segment2 === 'category' ? 'show' : '' }}" role="list"
-                        id="submenu-category" aria-expanded="false">
-                        <ul class="flex-column nav">
-                            @can('user-view')
-                                <li
-                                    class="nav-item {{ $segment2 === 'category' && ($segment3 === null || $segment3 === '') ? 'active' : '' }}">
-                                    <a href="{{ route('admin.category.index') }}" class="nav-link">
-                                        <span class="sidebar-text">Category</span>
-                                    </a>
-                                </li>
-                            @endcan
-                            <li class="nav-item">
-                            <a href="/users" class="nav-link">
-                                <span class="sidebar-text">SubCategory</span>
-                            </a>
-                        </li>
-                        </ul>
-                    </div>
+                    </a>
                 </li>
-            @endcan --}}
+            @endcan
             @can('commission-view')
                 <li class="nav-item {{ $segment2 == 'commissions' ? 'active' : '' }}">
                     <a href="{{ route('admin.commission.index') }}" class="nav-link d-flex justify-content-between">
@@ -202,7 +176,7 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                             </span>
-                            <span class="sidebar-text {{ $segment2 == 'plans' ? 'nav-active' : '' }}">Plans</span>
+                            <span class="sidebar-text {{ $segment2 == 'plans' ? 'nav-active' : '' }}">Plan Management</span>
                         </span>
                     </a>
                 </li>
@@ -280,7 +254,7 @@
                                 <span class="sidebar-text">Image Thumbnails</span>
                             </a>
                         </li> --}}
-                        {{-- @if(auth()->user()->id == '1')
+                        {{-- @if (auth()->user()->id == '1')
                             <li
                                 class="nav-item {{ $segment2 === 'settings' && $segment3 === 'two-factor-create' ? 'active' : '' }}">
                                 <a href="{{ route('admin.settings.two-factor-create') }}" class="nav-link">
@@ -439,7 +413,7 @@
                     </div>
                 </li>
             @endcan --}}
-            
+
         </ul>
     </div>
 </nav>

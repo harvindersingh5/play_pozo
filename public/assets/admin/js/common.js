@@ -145,3 +145,33 @@ $(document).on("click", ".input-group-text .fa-solid.fa-eye-slash, .input-group-
         return attr === "password" ? "text" : "password";
     });
 });
+
+
+/**Toggle status */
+function toggleStatus(element, model, id, field=null, message=null) {
+    jQuery(element).attr('disabled', true)
+    let params = { 'id': id, 'model': model, 'field':field, 'message':message };
+    let url = APP_URL + "/status/update";
+    let response = ajaxCall(url, 'post', params);
+    response.then(function (result) {
+        // toastr.options.closeButton = true;
+        // toastr.options.closeMethod = 'fadeOut';
+        // toastr.options.closeDuration = 10;
+        jQuery(element).attr('disabled', false)
+
+        if (result.status == 'success') {
+            toastMsg('success', result?.message || 'Successfully activated.')
+            //return toastr.success(result.message);
+        }
+        else {
+            toastMsg('error', result?.message);
+            //return toastr.error(result.message);
+        }
+    }).catch(function (error) {
+        $(element).prop("checked", !$(element).prop("checked"));
+        return toastMsg('error', error?.message);
+    })
+}
+
+
+

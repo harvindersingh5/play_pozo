@@ -1,5 +1,5 @@
 <x-admin-layout>
-    @section('title', 'User')
+    @section('title', 'Manager')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         <div class="d-block mb-md-0">
             <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
@@ -15,13 +15,13 @@
                         </a>
                     </li>
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ env('APP_NAME') }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Users List</li>
+                    <li class="breadcrumb-item active" aria-current="page">Managers List</li>
                 </ol>
             </nav>
-            <h2 class="h4">Users List</h2>
+            <h2 class="h4">Managers List</h2>
         </div>
         <div class="btn-toolbar mb-md-0">
-            {{-- <a href="{{ route('admin.users.create') }}"
+            {{-- <a href="{{ route('admin.managers.create') }}"
                 class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
                 <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -29,7 +29,7 @@
                         d="M12 6v6m0 0v6m0-6h6m-6 0H6">
                     </path>
                 </svg>
-                New User
+                New Manager
             </a> --}}
             <div class="btn-group ms-2 ms-lg-3">
                 {{-- <button type="button" class="btn btn-sm btn-outline-gray-600" data-bs-toggle="modal"
@@ -88,7 +88,7 @@
         </div>
         <div class="card-body">
             <div id="userList">
-                <x-user-list :users="$users" :role="'users'"/>
+                <x-user-list :users="$users" :role="'managers'"/>
             </div>
         </div>
     </div>
@@ -103,7 +103,7 @@
                     let status = $("#filterStatus").val();
 
                     $.ajax({
-                        url: "{{ route('admin.users.index') }}",
+                        url: "{{ route('admin.managers.index') }}",
                         type: "GET",
                         data: {
                             search: search,
@@ -168,7 +168,7 @@
 
                     if (userIds.length > 0) {
 
-                        let url = '{{ route('admin.users.apply') }}';
+                        let url = '{{ route('admin.managers.apply') }}';
                         let data = {
                             user_ids: userIds,
                             perform_action: selectedAction,
@@ -192,7 +192,7 @@
                 });
 
                 $('#exportDetails').click(function() {
-                    window.location.href = '{{ route('admin.users.download-csv') }}';
+                    window.location.href = '{{ route('admin.managers.download-csv') }}';
                 });
 
                 // Here is the code for send the users csv file
@@ -216,7 +216,7 @@
                         },
                     });
 
-                    let url = '{{ route('admin.users.share-csv') }}';
+                    let url = '{{ route('admin.managers.share-csv') }}';
                     let form = $('#share-user-csv');
                     let data = new FormData(form[0]);
                     if (jQuery('#share-user-csv').valid()) {

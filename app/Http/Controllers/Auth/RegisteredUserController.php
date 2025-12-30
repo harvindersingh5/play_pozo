@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRegisterRequest;
 use App\Mail\DynamicEmail;
 use App\Models\EmailTemplate;
 use App\Models\User;
+use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
@@ -31,49 +34,64 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(UserRegisterRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        try {
+            $data = $request->validated();
+            
+            $nameData = explode(' ', $data['full_name']);
+            $firstName = $nameData[0] ?? '';
+            $lastName = $nameData[1] ?? '';
+            
+            DB::beginTransaction();
 
-        $nameData = explode(' ', $request->name);
-        $firstName = $nameData[0] ?? '';
-        $lastName = $nameData[1] ?? '';
-        $user = User::create([
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'encrypt_password' => jsencode_userdata($request->password),
-        ]);
+            $user = User::create([
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+                'encrypt_password' => jsencode_userdata($request['password']),
+            ]);
 
-        $user->assignRole('User');
+            //phone number filled
+            if($request->filled('phone_number')) {
+                $user->user_detail()->create([
+                    'phone_country_code' => $request['phone_country_code'],
+                    'phone_number' => $request['phone_number'],
+                ]);
+            }
+            
+            //Assingn Manager role
+            $user->assignRole(config('constant.role.manager.name'));
+            
+            event(new Registered($user));
+            
+            DB::commit();
+            
+            // try {
+            //     $template = EmailTemplate::findByName('registration_confirmation');
 
-        event(new Registered($user));
-
-        // try {
-        //     $template = EmailTemplate::findByName('registration_confirmation');
-
-        //     $dynamicData = [
-        //         'user_name' => $user->full_name,
-        //         'user_email' => $user->email,
-        //         'app_name' => config('app.name'),
-        //         'app_url' => config('app.url'),
-        //         'verification_link' => url('/verify-email/' . $user->id . '/' . sha1($user->email)),
-        //     ];
-        //     Mail::to($user->email)->send(new DynamicEmail($template, $dynamicData));
-        //     \Log::info('Email sent successfully to ' . $user->email);
-        // } catch (\Exception $e) {
-        //     \Log::error('Email sending failed: ' . $e->getMessage());
-        // }
+            //     $dynamicData = [
+            //         'user_name' => $user->full_name,
+            //         'user_email' => $user->email,
+            //         'app_name' => config('app.name'),
+            //         'app_url' => config('app.url'),
+            //         'verification_link' => url('/verify-email/' . $user->id . '/' . sha1($user->email)),
+            //     ];
+            //     Mail::to($user->email)->send(new DynamicEmail($template, $dynamicData));
+            //     \Log::info('Email sent successfully to ' . $user->email);
+            // } catch (\Exception $e) {
+            //     \Log::error('Email sending failed: ' . $e->getMessage());
+            // }
 
 
-        Auth::login($user);
+            Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+            return redirect(route('dashboard', absolute: false));
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function checkEmail(Request $request)

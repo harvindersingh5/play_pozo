@@ -7,14 +7,15 @@ use Illuminate\Database\Eloquent\Collection;
 
 class UserList extends Component
 {
-    public $users;
+    public $users, $role;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($users)
+    public function __construct($users, $role)
     {
         $this->users = $users;
+        $this->role = $role;
     }
 
     /**

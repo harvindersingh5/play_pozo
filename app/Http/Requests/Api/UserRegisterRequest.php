@@ -2,23 +2,15 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Traits\CustomRequestFunction;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
 class UserRegisterRequest extends BaseRequest
 {
-    /***
-     * set phone_code and number into a single field
-     */
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'phone_e164' => $this->phone_country_code . $this->phone_number,
-        ]);
-    }
-
-
+    //To check phone_number must be unique because dial_code and number are stored single single
+    use CustomRequestFunction;
 
     /**
      * Determine if the user is authorized to make this request.

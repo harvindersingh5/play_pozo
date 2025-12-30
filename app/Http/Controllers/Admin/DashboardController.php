@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\SupportMessageNotification;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
@@ -16,18 +18,20 @@ class DashboardController extends Controller
     public function dashboard(Request $request){
         try{
             // if role is Administrator 
-            if($request->user()->hasRole('Administrator')){
-                return view('admin.dashboard');
-            }elseif($request->user()->hasRole('User')){
-                return view('user-dashboard');
-            }elseif($request->user()->hasRole('Subadmin')){
-                return view('admin.dashboard');
+            if($request->user()->hasRole(config('constant.role.super_admin.name'))){
+                $data = $this->getDashboardData();
+                $data['dates'] = $request->dates;
+                return view('admin.dashboard', compact('data'));
+            }elseif($request->user()->hasRole(config('constant.role.manager.name'))){
+                return view('manager.dashboard');   
             }else{
-                return redirect()->back()->with('error', 'You are not authorized to access this page');
+                Auth::logout();
+                return redirect()->route('login')->with('error', __('message.permission.denied'));
             }
         }catch(\Exception $e){
-            \Log::info("Dashboard Error");
-            return redirect()->back();
+            Log::info("Dashboard Error");
+            // dd($e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
@@ -63,5 +67,19 @@ class DashboardController extends Controller
             return back()->withInput()->withErrors(['message' => 'Failed to send your message. Please try again later.']);
         }
 
+    }
+
+    /**
+     * Return dashboard data
+     */
+    protected function getDashboardData() {
+        try {
+            $data = [];
+            $data['total_players'] = User::role(config('constant.role.player.name'))->count();
+            
+            return $data;
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 }

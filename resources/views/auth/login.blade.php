@@ -9,11 +9,6 @@
                 <div class="bg-white shadow border-0 rounded p-4 p-lg-5 w-100 fmxw-500">
                     <div class="text-center text-md-center mb-4 mt-md-0">
                         <h1 class="h3 mb-4">Welcome Back</h1>
-                        {{-- <p class="mb-0"> Create new account or
-                            <p class="mb-0">Sign in with these credentials:</p>
-                            <p class="mb-0"> Email: <strong>admin@gmail.com</strong> Password:
-                                <strong>Shine@123</strong></p>
-                        </p> --}}
                     </div>
                     <form action="{{ route('login') }}" id="login-form" method="POST">
                         @csrf

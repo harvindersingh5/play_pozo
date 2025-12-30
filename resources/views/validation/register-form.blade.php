@@ -1,7 +1,7 @@
 <script>
     jQuery(document).ready(function() {
         const rules = {
-            name: {
+            full_name: {
                 required: true,
                 minlength: firstNametMinLength,
                 maxlength: firstNameMaxLength,
@@ -23,6 +23,18 @@
                     }
                 }
             },
+            phone_country_code: {
+                regex: PHONE_COUNTRY_CODE_REGEX,
+                required: function () {
+                    return $('#phone_number').val().length > 0;
+                }
+            },
+            phone_number: {
+                regex: PHONE_COUNTRY_REGEX,
+                required: function () {
+                    return $('#phone_country_code').val().length > 0;
+                }
+            },
             password: {
                 required: true,
                 minlength: passwordMinLength,
@@ -36,7 +48,7 @@
         };
 
         const messages = {
-            name: {
+            full_name: {
                 required: `{{ __('custom_messages.user.required', ['attribute' => 'name']) }}`,
                 minlength: `{{ __('custom_messages.user.min', ['attribute' => 'name', 'min' => '2']) }}`,
                 maxlength: `{{ __('custom_messages.user.max', ['attribute' => 'name', 'max' => '50']) }}`,

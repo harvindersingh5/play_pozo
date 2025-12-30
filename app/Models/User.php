@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Traits\FormatsModelDates;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,7 +17,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, SoftDeletes, HasApiTokens;
+    use HasFactory, Notifiable, HasRoles, SoftDeletes, HasApiTokens, FormatsModelDates;
 
     /**
      * The attributes that are mass assignable.
@@ -36,7 +38,7 @@ class User extends Authenticatable
     protected $dates = ['deleted_at'];
 
 
-    protected $appends = ['full_name'];
+    protected $appends = ['full_name', 'role'];
 
 
     /**
@@ -151,6 +153,14 @@ class User extends Authenticatable
     public function stores()
     {
         return $this->hasMany(Store::class);
+    }
+
+
+    /**
+     * Get role of user
+     */
+    public function getRoleAttribute() {
+        return $this->getRoleNames()->toArray();
     }
 
 }

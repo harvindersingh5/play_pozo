@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1\Auth;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\Api\UserRegisterRequest;
+use App\Models\Role;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Exception;
@@ -128,9 +129,18 @@ class RegisterController extends Controller
                 'phone_number' => $data['phone_number'],
                 'phone_country_code' => $data['phone_country_code']
             ]);
-            DB::commit();
 
-            // $user = User::select('id', 'email')->find($user->id)->append('full_name');;
+            //Check role exists 
+            $roleName = config('constant.role.player');
+            $roleExists = Role::where('name', $roleName)->exists();
+            if(!$roleExists) {
+                throw new Exception(__('message.role.player.not_exist'));
+            }
+            
+            //Assing role player
+            $user->assignRole(config('constant.role.player.name'));
+
+            DB::commit();
 
             $data = [
                 'user' => [

@@ -13,12 +13,13 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = [
-
-            ['name' => 'Administrator', 'guard_name' => 'web', 'description' => 'Full access to all system features.'],
-            ['name' => 'User', 'guard_name' => 'web', 'description' => 'Limited access to specific features.']
-
-        ];
-        Role::insert($roles);
+        $roles = config('constant.role');
+       
+        foreach ($roles as $role) {
+            Role::firstOrCreate(
+                ['name' => $role['name'], 'guard_name' => $role['guard_name']],
+                ['description' => $role['description']]
+            );
+        }
     }
 }

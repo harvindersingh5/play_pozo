@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile-update', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile-destroy', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile-pic-update', [ProfileController::class, 'updateProfilePic'])->name('update-profile-pic');
+
+    //Update status 
+    Route::match(['GET', "POST"], 'status/update', [AjaxController::class, 'toggleStatus'])->name('status');
 });
 
 require __DIR__.'/auth.php';

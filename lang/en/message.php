@@ -56,5 +56,15 @@ return [
             'error'   => 'Unexpected error',
         ]
     ],
-    'not_found' => ':attribute not found'
+    'not_found' => ':attribute not found',
+
+    'permission' => [
+        'denied' => 'You are not authorized to access this page'
+    ],
+
+    'role' => [
+        'player' => [
+            'not_exist' => 'Role assignment failed: role does not exist.'
+        ]
+    ]
 ];

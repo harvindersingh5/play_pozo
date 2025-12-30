@@ -1,5 +1,5 @@
 <x-admin-layout>
-    @section('title', 'Update User')
+    @section('title', 'Create User')
     <div>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
             <div class="d-block mb-4 mb-md-0">
@@ -15,12 +15,13 @@
                                 </svg>
                             </a>
                         </li>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ config('app.name') }}</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ env('APP_NAME') }}</a>
+                        </li>
                         <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Users List</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Update user</li>
+                        <li class="breadcrumb-item active" aria-current="page">Add user</li>
                     </ol>
                 </nav>
-                <h2 class="h4">Update user</h2>
+                <h2 class="h4">Add user</h2>
             </div>
         </div>
         @include('admin.common.notification')
@@ -28,18 +29,17 @@
             <div class="col-12 col-xl-8">
                 <div class="card card-body shadow-sm mb-4">
                     <h2 class="h5 mb-4">General information</h2>
-                    <form action="{{ route('admin.users.update', jsencode_userdata($user->id)) }}" method="POST"
-                        id="create-user" enctype="multipart/form-data">
+                    <form action="{{ route('admin.users.store') }}" method="POST" id="create-user"
+                        enctype="multipart/form-data">
                         {{-- <input type="hidden" name="profile_picture" id="Profile" value=""> --}}
                         @csrf
-                        @method('PUT')
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div>
                                     <label for="first_name">First Name</label>
                                     <input class="form-control @error('first_name') is-invalid @enderror"
-                                        id="first_name" type="text" placeholder="Enter your first name"
-                                        name="first_name" value="{{ old('first_name', $user->first_name) }}">
+                                        id="first_name" type="text" placeholder="First name" name="first_name"
+                                        value="{{ old('first_name') }}">
                                     @error('first_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -51,8 +51,8 @@
                                 <div>
                                     <label for="last_name">Last Name</label>
                                     <input class="form-control @error('last_name') is-invalid @enderror" id="last_name"
-                                        type="text" placeholder="Also your last name" name="last_name"
-                                        value="{{ old('last_name', $user->last_name) }}">
+                                        type="text" placeholder="Last name" name="last_name"
+                                        value="{{ old('last_name') }}">
                                     @error('last_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -66,8 +66,8 @@
                                 <div class="form-group">
                                     <label for="email">Email</label>
                                     <input class="form-control @error('email') is-invalid @enderror" id="email"
-                                        type="email" placeholder="user@yopmail.com" name="email"
-                                        value="{{ old('email', $user->email) }}" readonly>
+                                        type="email" placeholder="example@domain.com" name="email"
+                                        value="{{ old('email') }}">
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -79,15 +79,15 @@
                                 <div class="form-group">
                                     <label for="phone_number">Phone Number</label>
                                     <input class="form-control  @error('phone_number') is-invalid @enderror"
-                                        id="phone_number" type="text" placeholder="+12-345 678 910"
-                                        name="phone_number" value="{{ old('phone_number', @$user->user_detail->phone_number) }}">
+                                        id="phone_number" type="text" placeholder="+91-1234567890"
+                                        name="phone_number" value="{{ old('phone_number') }}">
                                     @error('phone_number')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -96,8 +96,10 @@
                                     <select class="form-select form-control mb-0 @error('gender') is-invalid @enderror"
                                         id="gender" aria-label="Gender select example" name="gender">
                                         <option value="" selected>Select Gender</option>
-                                        @foreach(get_gender() as $value)
-                                            <option value="{{$value}}" {{ @$user->user_detail->gender == $value ? 'selected' : '' }}>{{$value}}</option>
+                                        @foreach (get_gender() as $value)
+                                            <option value="{{ $value }}"
+                                                {{ old('gender') == $value ? 'selected' : '' }}>{{ $value }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('gender')
@@ -106,19 +108,19 @@
                                         </span>
                                     @enderror
                                 </div>
-                            </div>                            
-                            {{-- <div class="col-md-6 mb-3">
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <label for="role">Role</label>
                                 <select class="form-select mb-0 @error('role') is-invalid @enderror" id="role"
                                     aria-label="role select example" name="role">
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}"
-                                            @if ($user->roles->isNotEmpty() && $role->id === $user->roles->first()->id) selected @endif>
-                                            {{ $role->name }}
+                                            @if ($role->name == 'User') selected @endif>
+                                            {{ ucfirst($role->name) }}
                                         </option>
                                     @endforeach
                                 </select>
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 form-group mb-4">
@@ -129,8 +131,7 @@
                                     </span>
                                     <input type="password" placeholder="Password"
                                         class="form-control  @error('password') is-invalid @enderror" id="cPassword"
-                                        name="password"
-                                        value="{{ old('password', jsdecode_userdata($user->encrypt_password)) }}">
+                                        name="password">
                                     @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -145,8 +146,7 @@
                                         <i class="fa-solid fa-eye-slash"></i>
                                     </span>
                                     <input type="password" placeholder="Confirm Password" class="form-control"
-                                        id="confirm_password" name="confirm_password"
-                                        value="{{ old('confirm_password', jsdecode_userdata($user->encrypt_password)) }}">
+                                        id="confirm_password" name="confirm_password">
                                     @error('confirm_password')
                                         <div class="invalid-feedbacks" role="alert">
                                             {{ $message }}
@@ -160,8 +160,10 @@
                                 <label for="status">Status</label>
                                 <select class="form-select mb-0  @error('status') is-invalid @enderror" id="status"
                                     aria-label="status select example" name="status">
-                                    @foreach(get_status() as $value)
-                                        <option value="{{$value}}" {{ @$user->status == $value ? 'selected' : '' }}>{{$value}}</option>
+                                    @foreach (get_status() as $value)
+                                        <option value="{{ $value }}"
+                                            {{ old('status') == $value ? 'selected' : '' }}>{{ $value }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -173,7 +175,7 @@
                                     <label for="address">Address</label>
                                     <input class="form-control @error('address') is-invalid @enderror" id="address"
                                         type="text" placeholder="Enter your home address" name="address"
-                                        value="{{ old('address', @$user->user_detail->address) }}">
+                                        value="{{ old('address') }}">
                                     @error('address')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -187,14 +189,18 @@
                             <div class="col-sm-4 mb-3">
                                 <div class="form-group">
                                     <label for="Country">Country</label>
-                                    {{-- <input class="form-control  @error('country') is-invalid @enderror"
-                                        id="Country" type="text" placeholder="Country" name="country"
-                                        value="{{ old('country', @$user->user_detail->country) }}"> --}}
-                                    @php
-                                    $countries = get_countries();
-                                    @endphp
-                                    <select id="country" name="country" class="form-select form-control mb-0" data-selected="{{ @$user->user_detail->country ?? '' }}">
+                                    {{-- <input class="form-control  @error('country') is-invalid @enderror" id="Country"
+                                        type="text" placeholder="Country" name="country" value="{{ old('country') }}"> --}}
+                                    {{-- @php
+                                            $countries = get_countries();
+                                        @endphp --}}
+                                    <select id="country" name="country" class="form-select form-control mb-0">
                                         <option value="">Select Country</option>
+                                        {{-- @foreach ($countries as $country)
+                                                <option value="{{ $country->id }}"
+                                                    {{ old('country_id') == $country->id ? 'selected' : '' }}>
+                                                    {{ $country->name }}</option>
+                                            @endforeach --}}
                                     </select>
                                     @error('country')
                                         <span class="invalid-feedback" role="alert">
@@ -207,9 +213,8 @@
                                 <div class="form-group">
                                     <label for="state">State</label>
                                     {{-- <input class="form-control @error('state') is-invalid @enderror" id="state"
-                                        type="text" placeholder="State" name="state"
-                                        value="{{ old('state', @$user->user_detail->state) }}"> --}}
-                                    <select id="state" name="state" class="form-select form-control mb-0" data-selected="{{ @$user->user_detail->state ?? '' }}">
+                                        type="text" placeholder="State" name="state" value="{{ old('state') }}"> --}}
+                                    <select id="state" name="state" class="form-select form-control mb-0">
                                         <option value="">Select State</option>
                                     </select>
                                     @error('state')
@@ -223,9 +228,8 @@
                                 <div class="form-group">
                                     <label for="city">City</label>
                                     {{-- <input class="form-control @error('city') is-invalid @enderror" id="city"
-                                        type="text" placeholder="City" name="city"
-                                        value="{{ old('city', @$user->user_detail->city) }}"> --}}
-                                    <select id="city" name="city" class="form-select form-control mb-0" data-selected="{{ @$user->user_detail->city ?? '' }}">
+                                        type="text" placeholder="City" name="city" value="{{ old('city') }}"> --}}
+                                    <select id="city" name="city" class="form-select form-control mb-0">
                                         <option value="">Select City</option>
                                     </select>
                                     @error('city')
@@ -240,19 +244,19 @@
                                     <label for="postal_code">Zip code</label>
                                     <input class="form-control  @error('postal_code') is-invalid @enderror"
                                         id="postal_code" type="tel" placeholder="Zip" name="postal_code"
-                                        value="{{ old('postal_code', @$user->user_detail->pincode) }}">
+                                        value="{{ old('postal_code') }}">
                                     @error('postal_code')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                         <div class="mt-3">
-                            <button type="submit" class="btn btn-gray-800 mt-2 animate-up-2 update-btn">Save
+                            <button type="submit" class="btn btn-gray-800 mt-2 animate-up-2 save-all-btn">Save
                                 All</button>
-                            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary mt-2">Cancel</a>
+                             <a href="{{ route('admin.users.index') }}" class="btn btn-secondary mt-2">Cancel</a>
                         </div>
                     </form>
                 </div>
@@ -260,42 +264,41 @@
             <div class="col-12 col-xl-4">
                 <div class="row">
                     <div class="col-12 mb-4">
+
                         <div class="card shadow border-0 text-center p-0 user-profile-box">
                             <div class="profile-cover rounded-top back-preview-image"
-                                data-background="{{ $user->background_url }}"
-                                style="background: url(&quot;../assets/img/profile-cover.jpg&quot;);">
+                                data-background="{{ asset('assets/custom/images/default-background-image.webp') }}">
                             </div>
                             <div class="card-body pb-5">
-                                <img src="{{ $user->profile_url }}"
-                                    class="avatar-xl rounded-circle mx-auto mt-n7 mb-4 front-preview-image" alt="Profile Preview">
-                                    <h4 class="h3">{{ $user->first_name }} {{ $user->last_name }}</h4>
-                                    <h5 class="fw-normal">{{ $user->getRoleNames()[0] ?? 'N/A' }}</h5>
-                                    <p class="text-gray mb-4">
-                                        {{ @$user->user_detail?->city_name }},{{ @$user->user_detail?->country_name }}</p>
-                                    {{-- <a class="btn btn-sm btn-gray-800 d-inline-flex align-items-center me-2"
-                                        href="#">
-                                        <svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z">
-                                            </path>
-                                        </svg>
-                                        Connect
-                                    </a>
-                                    <a class="btn btn-sm btn-secondary" href="#">Send Message</a> --}}
+                                <img src="{{ asset('assets/custom/images/default-profile.png') }}"
+                                    class="avatar-xl rounded-circle mx-auto mt-n7 mb-4 front-preview-image"
+                                    alt="Profile Preview">
+                                <h4 class="h3">
+                                    Full Name
+                                </h4>
+                                <h5 class="fw-normal">Role</h5>
+                                <p class="text-gray mb-4">City, Country</p>
+                                {{-- <a class="btn btn-sm btn-gray-800 d-inline-flex align-items-center me-2"
+                                    href="#">
+                                    <svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z">
+                                        </path>
+                                    </svg>
+                                    Connect
+                                </a>
+                                <a class="btn btn-sm btn-secondary" href="#">Send Message</a> --}}
                             </div>
                         </div>
                         <div class="card card-body border-0 shadow mb-4 mt-4 error-div-box">
-                            <h2 class="h5 mb-4">Edit profile photo</h2>
-                            <span class="d-none invalid-feedback fileTypeError">Image format is not valid</span>
-                            <span class="d-none invalid-feedback fileSizeError">Your image can't be more than 2
-                                MB</span>
+                            <h2 class="h5 mb-4">Select profile photo</h2>
                             <div class="d-flex align-items-center">
                                 <div class="me-3">
                                     <!-- Profile Image Preview -->
                                     <div class="user-avatar xl-avatar">
                                         <img class="rounded avatar-xl front-preview-image"
-                                            src="{{ $user->profile_url }}"
+                                            src="{{ asset('assets/custom/images/default-profile.png') }}"
                                             alt="Profile Photo">
                                     </div>
                                 </div>
@@ -320,19 +323,23 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card card-body border-0 shadow mb-4 mt-4 error-div-box">
-                            <h2 class="h5 mb-4">Edit background photo</h2>
+                            @error('profile_picture')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                             <span class="d-none invalid-feedback fileTypeError">Image format is not valid</span>
                             <span class="d-none invalid-feedback fileSizeError">Your image can't be more than 2
                                 MB</span>
+                        </div>
+                        <div class="card card-body border-0 shadow mb-4 mt-4 error-div-box">
+                            <h2 class="h5 mb-4">Select background photo</h2>
                             <div class="d-flex align-items-center">
                                 <div class="me-3">
                                     <!-- Background Image Preview -->
-                                    {{-- @dd($user->user_detail->back_profile_path,$user->user_detail->background_url); --}}
                                     <div class="user-avatar xl-avatar">
                                         <img class="rounded avatar-xl back-preview-image"
-                                            src="{{ $user->background_url }}"
+                                            src="{{ asset('assets/custom/images/default-background-image.webp') }}"
                                             alt="Background Photo">
                                     </div>
                                 </div>
@@ -357,6 +364,14 @@
                                     </div>
                                 </div>
                             </div>
+                            @error('back_picture')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                            <span class="d-none invalid-feedback fileTypeError">Image format is not valid</span>
+                            <span class="d-none invalid-feedback fileSizeError">Your image can't be more than 2
+                                MB</span>
                         </div>
                     </div>
                 </div>
@@ -367,7 +382,7 @@
     @push('scripts')
         @include('validation.user')
         @include('admin.partials.country-state-city-dropdown-js')
-        <script src="{{ asset('assets/admin/js/unsaved-changes-warning.js')}}"></script>
+        <script src="{{ asset('assets/admin/js/unsaved-changes-warning.js') }}"></script>
         <script>
             $(document).ready(function() {
                 let isValid = true;
@@ -391,24 +406,24 @@
                         const fileSize = file.size / 1024 / 1024; // in MB
                         const fileType = file.type;
 
-                        const errorBox = $(input).closest('.error-div-box');
+                        const cardElement = $(input).closest('.error-div-box');
 
                         if (fileSize > 2) {
-                            errorBox.find(".fileSizeError").removeClass('d-none');
-                            errorBox.find(".fileTypeError").addClass('d-none');
+                            cardElement.find(".fileSizeError").removeClass('d-none');
+                            cardElement.find(".fileTypeError").addClass('d-none');
                             input.value = "";
                             return false;
                         }
 
                         if (!["image/png", "image/jpg", "image/jpeg"].includes(fileType)) {
-                            errorBox.find(".fileTypeError").removeClass('d-none');
-                            errorBox.find(".fileSizeError").addClass('d-none');
+                            cardElement.find(".fileTypeError").removeClass('d-none');
+                            cardElement.find(".fileSizeError").addClass('d-none');
                             input.value = "";
                             return false;
                         }
 
-                        errorBox.find(".fileSizeError").addClass('d-none');
-                        errorBox.find(".fileTypeError").addClass('d-none');
+                        cardElement.find(".fileSizeError").addClass('d-none');
+                        cardElement.find(".fileTypeError").addClass('d-none');
 
                         let reader = new FileReader();
                         reader.onload = function(event) {

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CmsController;
 use App\Http\Controllers\Admin\CommissionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmailTemplateController;
+use App\Http\Controllers\Admin\ManagerController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\RolePermissionController;
 use App\Http\Controllers\Admin\UserController;
@@ -25,7 +26,7 @@ Route::get('/get-cities', [LocationController::class, 'getCities'])->name('get-c
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
-    // User Management
+    // Players
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->middleware(['permission:user-view'])->name('index');
         Route::get('/create', [UserController::class, 'create'])->middleware(['permission:user-add'])->name('create');
@@ -39,6 +40,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/download-csv', [UserController::class, 'downloadCSV'])->middleware(['permission:user-edit', 'permission:user-delete'])->name('download-csv');
         Route::post('/share-csv', [UserController::class, 'shareCsv'])->middleware(['permission:user-edit', 'permission:user-delete'])->name('share-csv');
         Route::get('/activity', [UserController::class, 'userActivity'])->middleware(['permission:user-activity-view'])->name('activity');
+    });
+
+    //Managers
+    Route::prefix('managers')->name('managers.')->group(function () {
+        Route::get('/', [ManagerController::class, 'index'])->name('index');
+        Route::get('/create', [ManagerController::class, 'create'])->name('create');
+        Route::any('/store', [ManagerController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [ManagerController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [ManagerController::class, 'update'])->name('update');
+        Route::get('/{id}/delete', [ManagerController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/show', [ManagerController::class, 'show'])->name('show');
+        Route::get('/{id}/suspend', [ManagerController::class, 'suspend'])->name('suspend');
+        Route::get('/apply', [ManagerController::class, 'applyUser'])->name('apply');
+        Route::get('/download-csv', [ManagerController::class, 'downloadCSV'])->name('download-csv');
+        Route::post('/share-csv', [ManagerController::class, 'shareCsv'])->name('share-csv');
+        Route::get('/activity', [ManagerController::class, 'userActivity'])->name('activity');
     });
 
     // Sub-admin Management
@@ -154,7 +171,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/{store}', [\App\Http\Controllers\Admin\StoreController::class, 'update'])->middleware(['permission:store-edit'])->name('update');
         Route::get('/{store}/delete', [\App\Http\Controllers\Admin\StoreController::class, 'destroy'])->middleware(['permission:store-delete'])->name('destroy');
     });
-    
 });
 
 

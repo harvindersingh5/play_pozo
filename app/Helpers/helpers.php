@@ -195,3 +195,33 @@ if (!function_exists('guessStatus')) {
         return 500;
     }
 }
+
+
+
+
+/***
+ * Return auth user role name
+ */
+if (!function_exists('authRole')) {
+    function authRole()
+    {
+        if (!authUser()) {
+            return null;
+        }
+        return authUser()->role;
+    }
+}
+
+/***
+ * Return auth user 
+ */
+if (!function_exists('authUser')) {
+    function authUser()
+    {
+        if (!auth()->check()) {
+            return null;
+        }
+        return auth()->user();
+    }
+}
+
